@@ -48,7 +48,7 @@ class Base extends ModuleBase {
 	}
 
 	Identifie(req, res,name)
-	{
+	{	
 		if(this.user.includes(name))
 			this.sendJSON(req, res, 200, [{id:false}]);
 		else

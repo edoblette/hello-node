@@ -1,1 +1,8 @@
-window.addEventListener("load", event => new Accueil(document.body));
+
+
+
+
+window.addEventListener("load", event => new Accueil());
+
+
+

@@ -13,7 +13,7 @@ class Contact {
 		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 
-		this.mvc = new MVC("myMVC", this, new MyModel(), new MyView(), new MyController()); // init app MVC
+		this.mvc = new MVC("myMVC", this, new ModelContact(), new ViewContact(), new ControllerContact()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body); // attach view
 		this.mvc.view.activate(); // activate user interface
@@ -78,56 +78,17 @@ class ModelContact extends Model {
 class ViewContact extends View {
 
 	constructor() {
-		super();
+		super(); 
 		this.table = null;
 	}
 
 	initialize(mvc) {
 		super.initialize(mvc);
 
-		// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
-
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
-
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
-
-		// get dataset display
-		this.table = document.createElement("table");
-		this.stage.appendChild(this.table);
-
-
-
-
-		//champ texte pour l'inscritopn
-		this.text_ins=document.createElement("text")
-		this.text_ins.textContent="inscritopn"
-		this.stage.appendChild(this.text_ins);
-
-
-		// texte pour qu'il comprennent
-		this.input_ins=document.createElement("input")
-		this.stage.appendChild(this.input_ins);
-
-		//button pour l'inscription
-
-		this.insc=document.createElement("button")
-		this.insc.textContent="inscription"
-		this.stage.appendChild(this.insc);
-
-
-		// get dataset display
-		this.table2 = document.createElement("table");
-		this.stage.appendChild(this.table2);
-
+		this.utilisateur=createElement("table")
+		this.stage.appendChild(this.utilisateur)
+		this.stage.style.left = "100px";
+		this.stage.style.top = "1000px";
 	}
 
 	// activate UI
@@ -142,32 +103,22 @@ class ViewContact extends View {
 		this.removeListeners();
 	}
 
-	addListeners() {
-		this.getBtnHandler = e => this.btnClick(e);
-		this.btn.addEventListener("click", this.getBtnHandler);
-
-		this.ioBtnHandler = e => this.ioBtnClick(e);
-		this.iobtn.addEventListener("click", this.ioBtnHandler);
-
-		this.inscBtnHandler = e => this.inscBtnClick(e);
-		this.insc.addEventListener("click", this.inscBtnHandler);
+	addListeners(){
+	
 	}
 
-	removeListeners() {
-		this.btn.removeEventListener("click", this.getBtnHandler);
-		this.iobtn.removeEventListener("click", this.ioBtnHandler);
-		this.insc.removeEventListener("click", this.inscBtnHandler);
+	removeListeners(){
+	
 	}
 
 	btnClick(event) {
-		this.mvc.controller.btnWasClicked("more parameters"); // dispatch
 	}
 
-	ioBtnClick(event) {
-		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
+	ioBtnClick(event){
+
 	}
+
 	inscBtnClick(event){
-		this.mvc.controller.inscWasclicked("io parameters"); // dispatch
 
 	}
 
@@ -185,7 +136,7 @@ class ViewContact extends View {
 	}
 	
 	updateIO(value) {
-		this.iovalue.innerHTML = value.toString(); // update io display
+	
 	}
 
 }
@@ -203,22 +154,19 @@ class ControllerContact extends Controller {
 
 	async inscWasclicked(params){
 		trace("ins click", params);
-		this.mvc.view.update(await this.mvc.model.other(),this.mvc.view.table2); // wait async request > response from server and update view table values
 		//	this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 
 	}
 	async btnWasClicked(params) {
 		trace("btn click", params);
-		this.mvc.view.update(await this.mvc.model.data(),this.mvc.view.table); // wait async request > response from server and update view table values
 	}
 
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
-		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
 	}
 
 	ioDummy(data) {
-		this.mvc.view.updateIO(data.value); // io dummy data received from main app
+	
 	}
 
 }

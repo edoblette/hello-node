@@ -15,7 +15,7 @@ class Accueil {
 
 		this.mvc = new MVC("myMVC", this, new MyModel(), new MyView(), new MyController()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
-		this.mvc.view.attach(this.parent); // attach view
+		this.mvc.view.attach(document.body)//this.parent); // attach view
 		this.mvc.view.activate(); // activate user interface
 
 	}
@@ -210,16 +210,17 @@ class MyController extends Controller {
 	async inscWasclicked(params){
 		trace("ins click", params);
 		let reponse=await this.mvc.model.Identifie()
-		console.log("reponse")
-		console.log(reponse[0]["id"])
+			
 		if(reponse[0]["id"]===true){ 
 			//this.mvc.app.io.emit("identifiant", {message:reponse[1]}); // send socket.io packet
+		
+			alert("coucou")
+			this.mvc.view.destroy()
 			new Nouvelle(reponse[0]["value"])
 			new Contact()
-			this.mvc.view.destroy()
 		}
 		else
-			alert("identifian deja prix")
+			console.log("identifiant deja prix")
 		//}
 			this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 

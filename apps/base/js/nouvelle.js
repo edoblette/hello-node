@@ -3,7 +3,6 @@ class Nouvelle {
 
 	constructor(nom) {
 		console.log("Nouvelle");
-		alert(nom)
 		this.nom=nom;
 		this.initialize();
 	}
@@ -86,31 +85,14 @@ class ViewNouvelle extends View {
 	initialize(mvc) {
 		super.initialize(mvc);
 
-		// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
-
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
-
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
-
-		// get dataset display
-		this.table = document.createElement("table");
-		this.stage.appendChild(this.table);
 
 
 
-		alert(this.nom)
+
+
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
-		this.text_ins.textContent=this.nom;
+		this.text_ins.textContent="bonjour "+this.nom+" \n bienvenue";
 		this.stage.appendChild(this.text_ins);
 
 
@@ -131,25 +113,17 @@ class ViewNouvelle extends View {
 	}
 
 	addListeners() {
-		this.getBtnHandler = e => this.btnClick(e);
-		this.btn.addEventListener("click", this.getBtnHandler);
-
-		this.ioBtnHandler = e => this.ioBtnClick(e);
-		this.iobtn.addEventListener("click", this.ioBtnHandler);
-
+	
 	}
 
 	removeListeners() {
-		this.btn.removeEventListener("click", this.getBtnHandler);
-		this.iobtn.removeEventListener("click", this.ioBtnHandler);
+	
 	}
 
 	btnClick(event) {
-		this.mvc.controller.btnWasClicked("more parameters"); // dispatch
 	}
 
 	ioBtnClick(event) {
-		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
 	}
 	
 	update(data,table) {
@@ -166,7 +140,7 @@ class ViewNouvelle extends View {
 	}
 	
 	updateIO(value) {
-		this.iovalue.innerHTML = value.toString(); // update io display
+		//this.iovalue.innerHTML = value.toString(); // update io display
 	}
 
 }
@@ -185,16 +159,13 @@ class ControllerNouvelle extends Controller {
 	
 	async btnWasClicked(params) {
 		trace("btn click", params);
-		this.mvc.view.update(await this.mvc.model.data(),this.mvc.view.table); // wait async request > response from server and update view table values
 	}
 
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
-		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
 	}
 
 	ioDummy(data) {
-		this.mvc.view.updateIO(data.value); // io dummy data received from main app
 	}
 
 }
