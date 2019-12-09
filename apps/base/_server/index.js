@@ -4,6 +4,7 @@ class Base extends ModuleBase {
 
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
+		this.user=new Array();
 	}
 
 	/**
@@ -27,23 +28,50 @@ class Base extends ModuleBase {
 		let data = [ // some random data
 			{id: 0, name: "data0", value: Math.random()},
 			{id: 1, name: "data1", value: Math.random()},
-			{id: 2, name: "data2", value: Math.random()}
+			{id: 2, name: "data2", value: Math.random()},
+			{id: 3, name: "data3", value: Math.random()}
+
 		];
 		this.sendJSON(req, res, 200, data); // answer JSON
 	}
 
+	other(req, res) {
+		let data = [ // some random data
+			{id: 0, name: "data0", value: Math.random()},
+			{id: 1, name: "data1", value: Math.random()},
+			{id: 2, name: "data2", value: Math.random()},
+			{id: 3, name: "data3", value: Math.random()},
+			{id:"coucou,",name:"mehdi",value:10}
+
+		];
+		this.sendJSON(req, res, 200, data); // answer JSON
+	}
+
+	Identifie(req, res,name)
+	{
+		if(this.user.includes(name))
+			this.sendJSON(req, res, 200, [{id:false}]);
+		else
+		{
+			this.user.push(name);
+			this.sendJSON(req,res,200,[{id:true,value:name}])
+		}	
+
+	}
 	/**
 	 * @method _onIOConnect : new IO client connected
 	 * @param {*} socket 
 	 */
 	_onIOConnect(socket) {
 		super._onIOConnect(socket); // do not remove super call
-		socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
-	}
+		socket.on("dummy",packet => this._onDummyData(socket, this.user+"\nbonjour le monde")); // listen to "dummy" messages
+		}
 
 	_onDummyData(socket, packet) { // dummy message received
 		trace(socket.id, "dummy", packet); // say it
-		socket.emit("dummy", {message: "dummy indeed", value: Math.random()}); // answer dummy random message
+	//	socket.emit("dummy",{message:"salut a toi",value:2})
+		socket.emit("dummy", {message: packet, value: Math.random()}); // answer dummy random message
+
 	}
 
 }
