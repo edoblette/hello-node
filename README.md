@@ -1,5 +1,5 @@
-# hello-node
-a basic nodeJS http server
+# Projet WebL3
+a basic WebRTC chat with NodeJs
 
 run it :
 
