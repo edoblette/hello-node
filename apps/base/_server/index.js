@@ -4,7 +4,7 @@ class Base extends ModuleBase {
 
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
-		this.user=new Array();
+		this.user=new Map();
 	}
 
 	/**
@@ -42,21 +42,26 @@ class Base extends ModuleBase {
 			{id: 2, name: "data2", value: Math.random()},
 			{id: 3, name: "data3", value: Math.random()},
 			{id:"coucou,",name:"mehdi",value:10}
-
 		];
 		this.sendJSON(req, res, 200, data); // answer JSON
 	}
 
 	Identifie(req, res,name)
 	{	
-		if(this.user.includes(name))
+		if(this.user.has(name))
 			this.sendJSON(req, res, 200, [{id:false}]);
 		else
 		{
-			this.user.push(name);
-			this.sendJSON(req,res,200,[{id:true,value:name}])
+			this.user.set(name,[req,res]);
+			this.sendJSON(req,res,200,[{id:true,value:name}]);
 		}	
 
+	}
+	SendUser(req, res)
+	{	
+		let data=[]
+		this.user.map(x=> data.push({name:x}))
+		this.sendJSON(req, res, 200, data); // answer JSON
 	}
 	/**
 	 * @method _onIOConnect : new IO client connected

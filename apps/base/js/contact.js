@@ -13,7 +13,7 @@ class Contact {
 		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 
-		this.mvc = new MVC("myMVC", this, new ModelContact(), new ViewContact(), new ControllerContact()); // init app MVC
+		this.mvc = new MVC("Contact ", this, new ModelContact(), new ViewContact(), new ControllerContact()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body); // attach view
 		this.mvc.view.activate(); // activate user interface
@@ -72,6 +72,12 @@ class ModelContact extends Model {
 		let result = await Comm.get("other"); // wait data from server
 		return result.response; // return it to controller
 	}
+	
+	async SendUser(){
+			// keep data in class variable ? refresh rate ?
+		let result = await Comm.get("SendUser"); // wait data from server
+		return result.response; // return it to controller
+	}
 
 }
 
@@ -84,11 +90,15 @@ class ViewContact extends View {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
-		this.utilisateur=createElement("table")
+		this.text=document.createElement("text")
+		this.text.innerHTML="voici la liste des contact disponible"
+		this.stage.appendChild(this.text)
+		this.utilisateur=document.createElement("table")
 		this.stage.appendChild(this.utilisateur)
-		this.stage.style.left = "100px";
-		this.stage.style.top = "1000px";
+	/*	this.stage.style.left = "100px";
+		this.stage.style.top = "0px";*/
+		this.mvc.controller.inscWasclicked
+		setInterval(this.mvc.controller.inscWasclicked,15000)
 	}
 
 	// activate UI
@@ -122,6 +132,7 @@ class ViewContact extends View {
 
 	}
 
+
 	update(data,table) {
 		while(table.firstChild) table.removeChild(table.firstChild); // empty table
 		data.forEach(el => { // loop data
@@ -154,8 +165,9 @@ class ControllerContact extends Controller {
 
 	async inscWasclicked(params){
 		trace("ins click", params);
-		//	this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 
+		this.mvc.view.update({id:1,coucou:"salut"},this.mvc.view.utilisateur); // wait async request > response from server and update view table values
+		let te =await this.mvc.model.SendUser()
 	}
 	async btnWasClicked(params) {
 		trace("btn click", params);

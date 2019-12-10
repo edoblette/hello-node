@@ -10,10 +10,10 @@ class Nouvelle {
 	async initialize() {
 
 		this.iospace = "baseapp"; // IO namespace for this app
-		this.io = io.connect("http://localhost/Nouvelle" + this.iospace); // connect socket.io
+		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 
-		this.mvc = new MVC("myMVC", this, new ModelNouvelle(), new ViewNouvelle(this.nom), new ControllerNouvelle()); // init app MVC
+		this.mvc = new MVC("Nouvelle ", this, new ModelNouvelle(), new ViewNouvelle(this.nom), new ControllerNouvelle()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body); // attach view
 		this.mvc.view.activate(); // activate user interface

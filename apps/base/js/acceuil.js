@@ -212,16 +212,14 @@ class MyController extends Controller {
 		let reponse=await this.mvc.model.Identifie()
 			
 		if(reponse[0]["id"]===true){ 
-			//this.mvc.app.io.emit("identifiant", {message:reponse[1]}); // send socket.io packet
 		
-			alert("coucou")
 			this.mvc.view.destroy()
-			new Nouvelle(reponse[0]["value"])
+			//new Nouvelle(reponse[0]["value"])
 			new Contact()
 		}
 		else
 			console.log("identifiant deja prix")
-		//}
+		
 			this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 
 	}
