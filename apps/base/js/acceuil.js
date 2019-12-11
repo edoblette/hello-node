@@ -73,9 +73,15 @@ class MyModel extends Model {
 		return result.response; // return it to controller
 	}
 	
-	async Identifie() {		// keep data in class variable ? refresh rate ?
-		let result = await Comm.get("Identifie/"+this.mvc.view.input_ins.value); // wait data from server
-		return result.response; // return it to controller
+	async Identifie() {		
+		let reg=/^[a-zA-Z0-9]*|/
+		if(reg.exec(this.mvc.view.input_ins.value)[0]!=this.mvc.view.input_ins.value)
+			alert("erreur votre identifiant contient des erreurs ")
+		else	
+			{
+				let result = await Comm.get("Identifie/"+this.mvc.view.input_ins.value); // wait data from server
+			 	return result.response;
+			 } // return it to controller
 	}
 
 
@@ -110,14 +116,10 @@ class MyView extends View {
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
 
-
-
-
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
 		this.text_ins.textContent="inscritopn"
 		this.stage.appendChild(this.text_ins);
-
 
 		// texte pour qu'il comprennent
 		this.input_ins=document.createElement("input")
@@ -128,7 +130,6 @@ class MyView extends View {
 		this.insc=document.createElement("button")
 		this.insc.textContent="inscription"
 		this.stage.appendChild(this.insc);
-
 
 		// get dataset display
 		this.table2 = document.createElement("table");
@@ -172,6 +173,7 @@ class MyView extends View {
 	ioBtnClick(event) {
 		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
 	}
+	
 	inscBtnClick(event){
 		this.mvc.controller.inscWasclicked("io parameters"); // dispatch
 
@@ -179,15 +181,15 @@ class MyView extends View {
 
 	update(data,table) {
 		while(table.firstChild) table.removeChild(table.firstChild); // empty table
-		data.forEach(el => { // loop data
-			let line = document.createElement("tr"); // create line
-			Object.keys(el).forEach(key => { // loop object keys
-				let cell = document.createElement("td"); // create cell
-				cell.innerHTML = el[key]; // display
-				line.appendChild(cell); // add cell
+			data.forEach(el => { // loop data
+				let line = document.createElement("tr"); // create line
+				Object.keys(el).forEach(key => { // loop object keys
+					let cell = document.createElement("td"); // create cell
+					cell.innerHTML = el[key]; // display
+					line.appendChild(cell); // add cell
+				});
+				table.appendChild(line); // add line
 			});
-			table.appendChild(line); // add line
-		});
 	}
 	
 	updateIO(value) {
@@ -211,7 +213,7 @@ class MyController extends Controller {
 		trace("ins click", params);
 		let reponse=await this.mvc.model.Identifie()
 			
-		if(reponse[0]["id"]===true){ 
+		if ( reponse[0]["id"] === true){ 
 		
 			this.mvc.view.destroy()
 			//new Nouvelle(reponse[0]["value"])
@@ -224,6 +226,7 @@ class MyController extends Controller {
 
 	}
 	async btnWasClicked(params) {
+		console.log(this.mvc.	model)
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data(),this.mvc.view.table); // wait async request > response from server and update view table values
 	}
