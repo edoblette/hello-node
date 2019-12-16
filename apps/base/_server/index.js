@@ -40,10 +40,20 @@ class Base extends ModuleBase {
 			{id: 0, name: "data0", value: Math.random()},
 			{id: 1, name: "data1", value: Math.random()},
 			{id: 2, name: "data2", value: Math.random()},
-			{id: 3, name: "data3", value: Math.random()},
-			{id:"coucou,",name:"mehdi",value:10}
+			{id: 3, name: "data3", value: Math.random()}
 		];
 		this.sendJSON(req, res, 200, data); // answer JSON
+	}
+
+	/**
+	 * @method data : envoye un message
+	 * @param {*} req 
+	 * @param {*} res 
+	 * @param {*} message 
+	 */
+	SendMessage(req, res, message){
+		this.sendJSON(req, res, 200, [{message_content:message}]);
+		trace("Message:", message)
 	}
 
 	Identifie(req, res,name)

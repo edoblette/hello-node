@@ -1,8 +1,8 @@
 
-class Contact {
+class Chat {
 
 	constructor() {
-		console.log("loaded");
+		console.log("chat loaded");
 
 		this.initialize();
 	}
@@ -13,7 +13,7 @@ class Contact {
 		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 
-		this.mvc = new MVC("Contact ", this, new ModelContact(), new ViewContact(), new ControllerContact()); // init app MVC
+		this.mvc = new MVC("Chat", this, new ModelChat(), new ViewChat(), new ControllerChat()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body); // attach view
 		this.mvc.view.activate(); // activate user interface
@@ -49,7 +49,7 @@ class Contact {
 	}
 }
 
-class ModelContact extends Model {
+class ModelChat extends Model {
 
 	constructor() {
 		super();
@@ -73,15 +73,15 @@ class ModelContact extends Model {
 		return result.response; // return it to controller
 	}
 	
-	async SendUser(){
+	async SendMessage(message){
 			// keep data in class variable ? refresh rate ?
-		let result = await Comm.get("SendUser"); // wait data from server
-		return result.response; // return it to controller
+		 await Comm.get("SendMessage/"+ message); // wait data from server
+		return message; // return it to controller
 	}
 
 }
 
-class ViewContact extends View {
+class ViewChat extends View {
 
 	constructor() {
 		super(); 
@@ -90,17 +90,18 @@ class ViewContact extends View {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-		this.text=document.createElement("text")
-		this.text.innerHTML = "voici la liste des contact disponible"
+
+		// create message input
+		this.text=document.createElement("input")
+		this.text.placeholder = "message"
 		this.stage.appendChild(this.text)
-		this.utilisateur=document.createElement("table")
-		this.stage.appendChild(this.utilisateur)
-	/*	this.stage.style.left = "100px";
-		this.stage.style.top = "0px";*/
-		this.mvc.controller.inscWasclicked
-		console.log("!!! dedede" )
-		console.log(this.mvc.view)
-		setInterval(this.mvc.controller.inscWasclicked,1500)
+
+		// create button send message
+		this.btn=document.createElement("button")
+		this.btn.innerHTML = "envoyer"
+		this.stage.appendChild(this.btn)
+
+		//setInterval(this.mvc.controller.inscWasclicked,1500)
 	}
 
 	// activate UI
@@ -116,27 +117,26 @@ class ViewContact extends View {
 	}
 
 	addListeners(){
-	
+		// on met un event sur le bouton d'envoi
+		this.getBtnHandler = e => this.sendBtnClick(e);
+		this.btn.addEventListener("click", this.getBtnHandler);
 	}
 
 	removeListeners(){
-	
+		// on supprime l'event sur le bouton d'envoi
+		this.btn.removeEventListener("click", this.getBtnHandler);
 	}
 
-	btnClick(event) {
-	}
 
-	ioBtnClick(event){
-
-	}
-
-	inscBtnClick(event){
-
+	sendBtnClick(event){
+		this.mvc.controller.sendBtnClicked(); // dispatch
 	}
 
 	update(data) {
-		table = this.mvc.view.utilisateur;
-		console.log(data);
+		// create message input
+		this.newmessage=document.createElement("p")
+		this.newmessage.innerHTML = data
+		this.stage.appendChild(this.newmessage)
 	}
 	
 	updateIO(value) {
@@ -145,7 +145,7 @@ class ViewContact extends View {
 
 }
 
-class ControllerContact extends Controller {
+class ControllerChat extends Controller {
 
 	constructor() {
 		super();
@@ -156,16 +156,12 @@ class ControllerContact extends Controller {
 
 	}
 
-	async inscWasclicked(params){
-		//console.log(this)
-	}
-	async btnWasClicked(params) {
-		trace("btn click", params);
+	async sendBtnClicked(params){
+		let response = await this.mvc.model.SendMessage( this.mvc.view.text.value);
+		this.mvc.view.update(response);
 	}
 
-	async ioBtnWasClicked(params) {
-		trace("io btn click", params);
-	}
+
 
 	ioDummy(data) {
 	

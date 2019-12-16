@@ -112,7 +112,6 @@ class MyView extends View {
 
 
 
-
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
 		this.text_ins.textContent="inscritopn"
@@ -218,7 +217,7 @@ class MyController extends Controller {
 			new Contact()
 		}
 		else
-			console.log("identifiant deja prix")
+			console.log("identifiant deja pris")
 		
 			this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 

@@ -1,8 +1,7 @@
 
 
 
-
-window.addEventListener("load", event => new Accueil());
+window.addEventListener("load", event => new Chat());
 
 
 

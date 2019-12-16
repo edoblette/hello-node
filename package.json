@@ -6,12 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Modfort , Etienne Oblette",
+  "author": "Modfort , Edgar Oblette",
   "license": "MIT",
   "dependencies": {
     "connect": "^3.7.0",
+    "express": "^4.17.1",
     "g": "^2.0.1",
+    "jquery": "^3.4.1",
     "mime-types": "^2.1.25",
     "socket.io": "^2.3.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edoblette/projet-l3-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/edoblette/projet-l3-web/issues"
+  },
+  "homepage": "https://github.com/edoblette/projet-l3-web#readme"
 }
