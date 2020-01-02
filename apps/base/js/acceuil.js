@@ -37,6 +37,7 @@ class Accueil {
 		trace("yay IO connected");
 		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
 		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
+		
 	}
 
 	/**
@@ -73,15 +74,27 @@ class MyModel extends Model {
 		return result.response; // return it to controller
 	}
 	
-	async Identifie() {		
-		let reg=/^[a-zA-Z0-9]*|/
-		if(reg.exec(this.mvc.view.input_ins.value)[0]!=this.mvc.view.input_ins.value)
-			alert("erreur votre identifiant contient des erreurs ")
-		else	
+	async Identifie() {	
+		let match= this.mvc.view.input_ins.value.match(/^([a-z0-9@_]{3,})$/ig)
+		if(match)
+		{		
+
+			if( match[0] !== this.mvc.view.input_ins.value  )
 			{
-				let result = await Comm.get("Identifie/"+this.mvc.view.input_ins.value); // wait data from server
-			 	return result.response;
-			 } // return it to controller
+					alert("erreur votre identifiant contient des erreurs ")
+					return 	undefined
+			}
+			else	
+			{		
+					let result= await Comm.get("Identifie/"+this.mvc.view.input_ins.value);
+					return result.response
+			}
+		}
+		else
+		{
+			alert("erreur votre identifiant contient des erreurs ")
+			return 	undefined
+		}		
 	}
 
 
@@ -118,7 +131,7 @@ class MyView extends View {
 
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
-		this.text_ins.textContent="inscritopn"
+		this.text_ins.textContent="inscripton"
 		this.stage.appendChild(this.text_ins);
 
 		// texte pour qu'il comprennent
@@ -179,7 +192,9 @@ class MyView extends View {
 
 	}
 
+
 	update(data,table) {
+		console.log(typeof(data))
 		while(table.firstChild) table.removeChild(table.firstChild); // empty table
 			data.forEach(el => { // loop data
 				let line = document.createElement("tr"); // create line
@@ -211,22 +226,25 @@ class MyController extends Controller {
 
 	async inscWasclicked(params){
 		trace("ins click", params);
+
 		let reponse=await this.mvc.model.Identifie()
-			
-		if ( reponse[0]["id"] === true){ 
-		
-			this.mvc.view.destroy()
-			//new Nouvelle(reponse[0]["value"])
-			new Contact()
-		}
+		console.log("reponse est "+reponse)
+		if(reponse!==undefined){		
+				if ( reponse[0].id === true ){
+ 					this.mvc.view.destroy()
+					new Contact(this.mvc.view.input_ins.value)
+				}
+				else
+						alert("identifiant deja prix")
+				}
 		else
-			console.log("identifiant deja prix")
-		
-			this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
+			{
+				return undefined
+			}
+	//		this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 
 	}
 	async btnWasClicked(params) {
-		console.log(this.mvc.	model)
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data(),this.mvc.view.table); // wait async request > response from server and update view table values
 	}

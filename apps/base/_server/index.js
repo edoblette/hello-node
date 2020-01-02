@@ -35,6 +35,7 @@ class Base extends ModuleBase {
 		this.sendJSON(req, res, 200, data); // answer JSON
 	}
 
+
 	other(req, res) {
 		let data = [ // some random data
 			{id: 0, name: "data0", value: Math.random()},
@@ -51,17 +52,19 @@ class Base extends ModuleBase {
 		if(this.user.has(name))
 			this.sendJSON(req, res, 200, [{id:false}]);
 		else
-		{
-			this.user.set(name,[req,res]);
+		{	this.user.set(name,[req,res])	
 			this.sendJSON(req,res,200,[{id:true,value:name}]);
+			this._io.emit("new_client", ["salut me voila "+name]);
+			this._io.emit("liste_of_clients",JSON.stringify(this._clients))
 		}	
 
 	}
-	SendUser(req, res)
+
+	ListeConnecte()
 	{	
-		let data=[]
-		this.user.map(x=> data.push({name:x}))
-		this.sendJSON(req, res, 200, data); // answer JSON
+		if(this._clients.length!==0)			
+			this._io.emit("liste_of_clients",JSON.stringify(this._clients))
+
 	}
 	/**
 	 * @method _onIOConnect : new IO client connected
@@ -70,6 +73,8 @@ class Base extends ModuleBase {
 	_onIOConnect(socket) {
 		super._onIOConnect(socket); // do not remove super call
 		socket.on("dummy",packet => this._onDummyData(socket, this.user+"\nbonjour le monde")); // listen to "dummy" messages
+							this._io.emit("liste_of_clients",this._clients)
+
 		}
 
 	_onDummyData(socket, packet) { // dummy message received
@@ -81,4 +86,4 @@ class Base extends ModuleBase {
 
 }
 
-module.exports = Base; // export app class
+module.exports = Base; // export app class	
