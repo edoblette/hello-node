@@ -108,25 +108,12 @@ class ViewContact extends View {
 	initialize(mvc) {
 		super.initialize(mvc);
 		this.text=document.createElement("text")
-<<<<<<< HEAD
 		this.text.innerHTML="Contact :"+this.ProfileName+"\n"
 		this.stage.appendChild(this.text)
 		this.utilisateur=document.createElement("table")
 		this.stage.appendChild(this.utilisateur)
 		this.stage.style.left = "100px";
 		this.stage.style.top = "0px";
-=======
-		this.text.innerHTML = "voici la liste des contact disponible"
-		this.stage.appendChild(this.text)
-		this.utilisateur=document.createElement("table")
-		this.stage.appendChild(this.utilisateur)
-	/*	this.stage.style.left = "100px";
-		this.stage.style.top = "0px";*/
-		this.mvc.controller.inscWasclicked
-		console.log("!!! dedede" )
-		console.log(this.mvc.view)
-		setInterval(this.mvc.controller.inscWasclicked,1500)
->>>>>>> c9f6dfdbbaf57bf8b5ac4b233999335d23a3d1d4
 	}
 
 	// activate UI
@@ -162,22 +149,6 @@ class ViewContact extends View {
 			});
 			this.utilisateur.appendChild(line); // add line
 			})//);
-	}
-	btnClick(event) {
-	}
-
-	ioBtnClick(event){
-
-	}
-
-	inscBtnClick(event){
-
-	}
-
-	update(data) {
-		table = this.mvc.view.utilisateur;
-		console.log(data);
->>>>>>> c9f6dfdbbaf57bf8b5ac4b233999335d23a3d1d4
 	}
 	
 	updateIO(value) {
@@ -215,9 +186,6 @@ class ControllerContact extends Controller {
 	update_table(packet)
 	{
 		this.mvc.view.update(packet,this.mvc.view.utilisateur)
-	}
-	async inscWasclicked(params){
-		//console.log(this)
 	}
 	async btnWasClicked(params) {
 		trace("btn click", params);
