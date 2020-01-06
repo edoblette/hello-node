@@ -17,16 +17,23 @@
 		<script src="js/utils/merge.js"></script>
 		<script src="js/utils/comm.js"></script>
 		<script src="js/rtcmodules/rtcconnector.js"></script>
-		<script src="js/acceuil.js"></script>
-		<script src="js/contact.js"></script>
-		<script src="js/nouvelle.js"></script>
-		<script src="js/main.js"></script>
+		<script>
+			window.addEventListener("load", event => new Chat());
+			console.log()
+		</script>
 		<script src="js/chat.js"></script>
 		
 	</head>
 
 	<body>
+		<div class="flexChild" id="camera-container">
+		<div class="camera-box">
+		    <video id="received_video" autoplay></video>
+		    <video id="local_video" autoplay muted></video>
+		    <button id="hangup-button" onclick="hangUpCall();" >
+		      Hang Up
+		    </button>
+		  </div>
+		</div>
 		
 	</body>
-
-</html>

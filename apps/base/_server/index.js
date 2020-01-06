@@ -1,10 +1,12 @@
 const ModuleBase = load("com/base"); // import ModuleBase class
 
+
 class Base extends ModuleBase {
 
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
-		this.user=new Map();
+		this.user = new Map();
+		this.socket = null;
 	}
 
 	/**
@@ -56,13 +58,13 @@ class Base extends ModuleBase {
 		trace("Message:", message)
 	}
 
-	Identifie(req, res,name)
+	Identifie(req, res, name)
 	{	
 		if(this.user.has(name))
 			this.sendJSON(req, res, 200, [{id:false}]);
 		else
 		{
-			this.user.set(name,[req,res]);
+			this.user.set(name, "id" );
 			this.sendJSON(req,res,200,[{id:true,value:name}]);
 		}	
 
@@ -73,19 +75,52 @@ class Base extends ModuleBase {
 		this.user.map(x=> data.push({name:x}))
 		this.sendJSON(req, res, 200, data); // answer JSON
 	}
+
+	Offer(req, res, username, target)
+	{	
+		if( this.user.has(target)){
+			trace("Target-session: " + this.user.get(target));
+			this.messageTo(this.user.get(target));
+			//this.sendJSON(req, res, 200, {user: this.user.get(target)});
+			//this.user[emit("user", {message: packet, value: "test"}); // answer dummy random message
+		}else{
+			trace("Target: " + target + "don't exist");
+		}
+		
+		//this.sendJSON(req, res, 200, {message: username});
+	}
+
+
 	/**
 	 * @method _onIOConnect : new IO client connected
 	 * @param {*} socket 
 	 */
 	_onIOConnect(socket) {
 		super._onIOConnect(socket); // do not remove super call
-		socket.on("dummy",packet => this._onDummyData(socket, this.user+"\nbonjour le monde")); // listen to "dummy" messages
+		this.socket = socket;
+		socket.on("msg", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
+		socket.on('new_user', user => this.new_user(socket, user));
+	}
+
+	new_user(socket, user){
+		if(user != null){
+			//var new_target = socket.id.replace('/baseapp#', '');
+			//trace(new_target + " new user: " + user);
+			this.user.set(user, socket);
+			socket.broadcast.emit("msg", {message: user, value: "New user " + user}); // answer dummy random message
 		}
+	}
+
+	async messageTo(target){
+		await target.emit("msg", { value: "la forme ?"})
+		console.log("sending to "+ target)
+	}
 
 	_onDummyData(socket, packet) { // dummy message received
-		trace(socket.id, "dummy", packet); // say it
-	//	socket.emit("dummy",{message:"salut a toi",value:2})
-		socket.emit("dummy", {message: packet, value: Math.random()}); // answer dummy random message
+		
+	
+		trace(socket.id, "user dit ", packet); // say it
+		socket.broadcast.emit("user", {message: packet, value: "test"}); // answer dummy random message
 
 	}
 
