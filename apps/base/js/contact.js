@@ -10,9 +10,10 @@ class Contact {
 	async initialize() {
 		this.iospace = "baseapp"; // IO namespace for this app
 		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
-		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 		this.mvc = new MVC("MyMvc", this, new ModelContact(), new ViewContact(this.ProfileName), new ControllerContact()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
+		this.io.on("connect", () =>
+				this.onIOConnect()); // listen connect event
 		this.mvc.view.attach(document.body); //sd  attach view
 		this.mvc.view.activate(); // activate user interface
 
@@ -32,20 +33,18 @@ class Contact {
 	 * @method onIOConnect : socket is connected
 	 */
 	onIOConnect() {
-		trace("yay IO connected");
-		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
-		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
-		this.io.on("new_client", packet =>{ 
-			console.log("new client "+packet)
-			this.add(packet)
+		this.io.on("liste_of_clients",packet=>{
 
-		});
-		this.io.on("liste_of_clients", packet =>{
-				 //this.update_table(packet);
-				this.mvc.controller.update_client(packet)
-			
-				 
-		}); // listen to "dummy" messages
+				console.log("ma taill est de "+packet[0])
+				this.mvc.controller.update_table(packet)
+				})
+		this.io.on("new_client",packet=>{
+
+				console.log("ma taill est de "+packet.lenght)
+				this.mvc.controller.add_client(packet)
+				})
+	
+	 // listen to "dummy" messages
 
 		 // listen to "dummy" messages
 	}
@@ -55,7 +54,6 @@ class Contact {
 	 * @param {Object} data 
 	 */
 	onDummyData(data) {
-		trace("IO data", data);
 		this.mvc.controller.ioDummy(data); // send it to controller
 	}
 
@@ -138,19 +136,42 @@ class ViewContact extends View {
 
 
 	update(data) {
+		console.log("update "+data[0])
 		while(this.utilisateur.firstChild)this.utilisateur.removeChild(this.utilisateur.firstChild); // empty table
 		//je ne comprend pas pourquoi cela ne marche pas j'ai du faire machine arriere
+		if(data[0]!==undefined)
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
 			Object.keys(el).forEach(key => { // loop object keys
 				let cell = document.createElement("td"); // create cell
 				cell.innerHTML = el; // display
 				line.appendChild(cell); // add cell
+				console.log(el)
 			});
 			this.utilisateur.appendChild(line); // add line
 			})//);
+		else
+			alert("coucou")
 	}
 	
+	update_new(data) {
+		console.log("update "+data[0])
+		while(this.utilisateur.firstChild)this.utilisateur.removeChild(this.utilisateur.firstChild); // empty table
+		//je ne comprend pas pourquoi cela ne marche pas j'ai du faire machine arriere
+		let line = document.createElement("tr");
+		if(data[0]!==undefined){
+		for (var i = data.length - 1; i >= 0; i--) {
+				  // create line
+				let cell = document.createElement("td"); // create cell
+				cell.innerHTML = data[i]; // display
+				line.appendChild(cell); // add cell
+				console.log(data[i])
+			};
+			this.utilisateur.appendChild(line); // add line
+		}
+		else
+			alert("coucou")
+	}
 	updateIO(value) {
 	
 	}
@@ -172,20 +193,17 @@ class ControllerContact extends Controller {
 	}
 
 	async add_client(client){
-		this.client.add([client])
-		//this.client.forEach(x=>alert((x+"c'est moi")))
+		this.client.add(client)
+		this.client.forEach(x=>alert((x+"c'est moi")))
 		this.mvc.view.update(this.client); // wait async request > response from server and update view table values
 	}
-	update_client(packet){
-		for (var i = packet.length - 1; i >= 0; i--) {
-			console.log("je suis le client "+packet[i])
-			this.client.add(packet[i])
-		}
-		this.mvc.view.update(this.client); 
-	}
+	
 	update_table(packet)
-	{
-		this.mvc.view.update(packet,this.mvc.view.utilisateur)
+	{   if(packet[0]!==undefined){
+		this.client.clear()
+		this.client=packet
+		this.mvc.view.update_new(this.client)
+		}
 	}
 	async btnWasClicked(params) {
 		trace("btn click", params);
