@@ -12,6 +12,10 @@ class Accueil {
 		this.iospace = "baseapp"; // IO namespace for this app
 		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
+<<<<<<< HEAD
+=======
+
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 		this.mvc = new MVC("myMVC", this, new MyModel(), new MyView(), new MyController()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body)//this.parent); // attach view
@@ -36,6 +40,10 @@ class Accueil {
 		trace("yay IO connected");
 		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
 		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 	}
 
 	/**
@@ -72,6 +80,7 @@ class MyModel extends Model {
 		return result.response; // return it to controller
 	}
 	
+<<<<<<< HEAD
 	async Identifie() {		
 		let reg=/^[a-zA-Z0-9]*|/
 		if(reg.exec(this.mvc.view.input_ins.value)[0]!=this.mvc.view.input_ins.value)
@@ -81,6 +90,29 @@ class MyModel extends Model {
 				let result = await Comm.get("Identifie/"+this.mvc.view.input_ins.value); // wait data from server
 			 	return result.response;
 			 } // return it to controller
+=======
+	async Identifie() {	
+		let match= this.mvc.view.input_ins.value.match(/^([a-z0-9@_]{3,})$/ig)
+		if(match)
+		{		
+
+			if( match[0] !== this.mvc.view.input_ins.value  )
+			{
+					alert("erreur votre identifiant contient des erreurs ")
+					return 	undefined
+			}
+			else	
+			{		
+					let result= await Comm.get("Identifie/"+this.mvc.view.input_ins.value);
+					return result.response
+			}
+		}
+		else
+		{
+			alert("erreur votre identifiant contient des erreurs ")
+			return 	undefined
+		}		
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 	}
 
 
@@ -115,10 +147,16 @@ class MyView extends View {
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
 
+<<<<<<< HEAD
 
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
 		this.text_ins.textContent="inscritopn"
+=======
+		//champ texte pour l'inscritopn
+		this.text_ins=document.createElement("text")
+		this.text_ins.textContent="inscripton"
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 		this.stage.appendChild(this.text_ins);
 
 		// texte pour qu'il comprennent
@@ -179,7 +217,13 @@ class MyView extends View {
 
 	}
 
+<<<<<<< HEAD
 	update(data,table) {
+=======
+
+	update(data,table) {
+		console.log(typeof(data))
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 		while(table.firstChild) table.removeChild(table.firstChild); // empty table
 			data.forEach(el => { // loop data
 				let line = document.createElement("tr"); // create line
@@ -211,6 +255,7 @@ class MyController extends Controller {
 
 	async inscWasclicked(params){
 		trace("ins click", params);
+<<<<<<< HEAD
 		let reponse=await this.mvc.model.Identifie()
 			
 		if ( reponse[0]["id"] === true){ 
@@ -227,6 +272,27 @@ class MyController extends Controller {
 	}
 	async btnWasClicked(params) {
 		console.log(this.mvc.model)
+=======
+
+		let reponse=await this.mvc.model.Identifie()
+		console.log("reponse est "+reponse)
+		if(reponse!==undefined){		
+				if ( reponse[0].id === true ){
+ 					this.mvc.view.destroy()
+					new Contact(this.mvc.view.input_ins.value)
+				}
+				else
+						alert("identifiant deja prix")
+				}
+		else
+			{
+				return undefined
+			}
+	//		this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
+
+	}
+	async btnWasClicked(params) {
+>>>>>>> 185a3269ab897b6534c4d9de4c91d8c359c9bcb0
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data(),this.mvc.view.table); // wait async request > response from server and update view table values
 	}
