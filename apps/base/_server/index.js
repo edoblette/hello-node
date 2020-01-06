@@ -4,9 +4,17 @@ class Base extends ModuleBase {
 
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
-		this.user=new Map();
+		this.user=new Array();
+		this.user.push("name","coucou")
 	}
+    estunique(name) {
 
+  		for (let i=0; i<this.user.length; i++) 
+    		if (this.user[i] === name) 
+      		return false
+    
+  		return true;
+	}
 	/**
 	 * @method hello : world
 	 * @param {*} req 
@@ -58,33 +66,26 @@ class Base extends ModuleBase {
 	}
 
 	Identifie(req, res,name)
-	{	
-		if(this.user.has(name))
+	{	if(!this.estunique(name))
 			this.sendJSON(req, res, 200, [{id:false}]);
 		else
-		{	this.user.set(name,[req,res])	
+		{	this.user.push(name)	
 			this.sendJSON(req,res,200,[{id:true,value:name}]);
-			this._io.emit("new_client", ["salut me voila "+name]);
-			this._io.emit("liste_of_clients",JSON.stringify(this._clients))
 		}	
+		this.user.map(x=>trace(x))
+		trace("quis sommes nous"+JSON.stringify(this.user))
 
 	}
 
-	ListeConnecte()
-	{	
-		if(this._clients.length!==0)			
-			this._io.emit("liste_of_clients",JSON.stringify(this._clients))
-
-	}
 	/**
 	 * @method _onIOConnect : new IO client connected
 	 * @param {*} socket 
 	 */
 	_onIOConnect(socket) {
-		super._onIOConnect(socket); // do not remove super call
-		socket.on("dummy",packet => this._onDummyData(socket, this.user+"\nbonjour le monde")); // listen to "dummy" messages
-							this._io.emit("liste_of_clients",this._clients)
-
+		super._onIOConnect(socket); // do notmove super call
+		//let sendUser=this.user.map(x=>"{name:"+x+"}")
+		this._io.emit("liste_of_clients",this.user)
+		//trace(sendUser)
 		}
 
 	_onDummyData(socket, packet) { // dummy message received
@@ -93,6 +94,12 @@ class Base extends ModuleBase {
 		socket.emit("dummy", {message: packet, value: Math.random()}); // answer dummy random message
 
 	}
+   _onIODisconnect(socket) {
+        trace("io disconnect", this._name);
+        this._clients.delete(socket.id);
+
+        
+    }
 
 }
 
