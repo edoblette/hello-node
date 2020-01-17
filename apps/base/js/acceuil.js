@@ -220,7 +220,7 @@ class MyController extends Controller {
 			new Chat(reponse[0]["value"])
 		}
 		else
-			console.log("identifiant deja pris")
+			alert("identifiant deja pris")
 		
 		this.mvc.app.io.emit("dummy", {message: "is click"}); // send socket.io packet
 

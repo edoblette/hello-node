@@ -78,7 +78,7 @@ class ModelChat extends Model {
 	}
 
 
-	async create_offer(){
+	async create_offer(method){
 
 		//await this.mvc.app.io.emit('to_server', {type: "offer",shoter: this.mvc.view.username.value, target: this.mvc.view.target.value});
 		// await Comm.get("messageHandler/" + msg);
@@ -86,7 +86,8 @@ class ModelChat extends Model {
 			adress: this.mvc,
 			shoter: this.mvc.controller.user ,
 			target: this.mvc.view.target.value,
-			caller: true
+			caller: true,
+			method: method
 		};
 		await this.Rtc.Call(info)
 	}
@@ -94,8 +95,8 @@ class ModelChat extends Model {
 	async receive_offer(params){
 		var info = {
 			adress: this.mvc,
-			shoter: null,
-			target: null,
+			shoter: params.shoter,
+			target: params.target,
 			caller: false
 		};
 		this.Rtc.ReceiveOffer(params, info)
@@ -271,7 +272,7 @@ class ControllerChat extends Controller {
 	}
 
 	async connectBtnClicked(params){
-		await this.mvc.model.create_offer();
+		await this.mvc.model.create_offer("default");
 
 	}
 

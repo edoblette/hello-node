@@ -11,9 +11,29 @@ class Rtc {
   		this.shoter = null;
   		this.target = null ;	 
 		this.caller = null;
+		this.method = null;
 
 		this.message_box = null
   		this.webcamStream = null;
+
+  		//media specs
+
+  		this.mediaSpec = {
+  			audio :false,
+  			video :false
+  			/*
+
+  			audio :{
+					    sampleSize: 16,
+					    channelCount: 2
+					},
+  			video : {
+					    width: { min: 640, ideal: 1920 },
+					    height: { min: 400, ideal: 1080 },
+					    aspectRatio: { ideal: 1.7777777778 }
+					}
+		*/
+  		}
 	    //var transceiver; 	
 	}
    
@@ -32,6 +52,11 @@ class Rtc {
 	  	this.shoter = info.shoter;
 	  	this.target = info.target;
 	  	this.caller = info.caller;
+	  	this.method = info.method;
+
+	   	this.init_media(this.method);
+
+
 	  	this.message_box = this.adress.view.message_box;
 
 		await this.LauchPeers()
@@ -100,7 +125,8 @@ class Rtc {
 			this.sendToServer({
 			      shoter: this.shoter,
 			      target: this.target,
-			      type: "video-offer",
+			      type: "offer",
+			      method: this.method,
 			      sdp: this.localConnection.localDescription
 			    });
 			console.log("4 - Offre envoye [INICIATOR]")
@@ -119,15 +145,8 @@ class Rtc {
 	    if(!this.webcamStream){
 		  	try {
 		      this.webcamStream = await navigator.mediaDevices.getUserMedia({
-			  		video:{
-					    width: { min: 640, ideal: 1920 },
-					    height: { min: 400, ideal: 1080 },
-					    aspectRatio: { ideal: 1.7777777778 }
-					},
-			  		audio: {
-					    sampleSize: 16,
-					    channelCount: 2
-					}
+			  		video:this.mediaSpec.video, 
+			  		audio:this.mediaSpec.audio 
 				});
 		      document.getElementById("local_video").srcObject = this.webcamStream;
 		    } catch(err) {
@@ -147,18 +166,56 @@ class Rtc {
 	}	
 
 
+	init_media(method){
+		// quel le methode d'appel
+  		switch(method){
+
+  			case "audio": 
+  				this.mediaSpec.audio = {
+					    sampleSize: 16,
+					    channelCount: 2
+					}
+  			break;
+
+  			case "video": 
+  				this.mediaSpec.video = {
+					    width: { min: 640, ideal: 1920 },
+					    height: { min: 400, ideal: 1080 },
+					    aspectRatio: { ideal: 1.7777777778 }
+					}
+  			break;
+
+  			case "mixed": 
+  			  		this.mediaSpec.audio = {
+					    sampleSize: 16,
+					    channelCount: 2
+					}
+
+					this.mediaSpec.video = {
+					    width: { min: 640, ideal: 1920 },
+					    height: { min: 400, ideal: 1080 },
+					    aspectRatio: { ideal: 1.7777777778 }
+					}
+  			break;
+
+  			case "default": 
+  				//alert("only msg")
+  			break;
+  		}
+
+	}
+
     // User receive a Video Offer
 	ReceiveOffer(params, info){
-  	
   		// quel est la nature du message
   		switch(params.type){
 
-  			case "video-offer":  // Invitation and offer to chat
-  				//console.log("T'as pas une clope ?")
+  			case "offer":  // Invitation and offer to chat
+  				this.init_media(params.method);
 	        	this.handleOffer(params,info);
 	        	break;
 
-	        case "video-answer":  // Callee has answered our offer
+	        case "answer":  // Callee has answered our offer
 	        	//console.log("Mais biensur BG !")
 	        	this.handleAnswer(params,info);
 	        	break;
@@ -183,8 +240,8 @@ class Rtc {
 	async handleOffer(params, info){
 	  	console.log("1 - Je recois une offre [RECEVOR]")
 	  	this.adress = info.adress;
-	  	this.target = params.shoter ;
-	  	this.shoter = params.target;
+	  	this.target = info.shoter ;
+	  	this.shoter = info.target;
 	  	this.caller = info.caller;
 	  	this.message_box = this.adress.view.message_box;
 
@@ -224,7 +281,7 @@ class Rtc {
 		this.sendToServer({
 			      shoter: this.shoter,
 			      target: this.target,
-			      type: "video-answer",
+			      type: "answer",
 			      sdp: this.localConnection.localDescription
 		});
 

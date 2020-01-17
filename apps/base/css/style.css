@@ -42,6 +42,11 @@ body {
 	position: relative;
 }
 
+#camera-container{
+	display: none;
+	border: 3px solid blue;
+}
+
 #received_video{
 	position: relative;
 	border:1px solid red;

@@ -107,14 +107,7 @@ class Base extends ModuleBase {
 				let target = message.target;
 				let sdp = message.sdp;
 				if(this.user.has(target)){
-					if( type === "offer"){
-						trace("Target-session: " + this.user.get(target));
-						this.messageToClient(this.user.get(target), shoter + " want to connect you");
-						//this.sendJSON(req, res, 200, {user: this.user.get(target)});
-						//this.user[emit("user", {message: packet, value: "test"}); // answer dummy random message
-					}else{
 						this.messageToClient(this.user.get(target), message)
-					}
 				}
 			}else 
 				console.log("pas compris " + message)	
