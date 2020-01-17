@@ -1,3 +1,13 @@
+/**
+    * Serveur SIDE
+    * Projet Web
+    * @teacher Nicolas Prieur <nicopowa@gmail.com> <https://ilusio.dev/>     
+    *
+    * @autor Edgar Oblette <edwardoblette@gmail.com>
+    * @collegues: Mehdi 
+    *              
+    * 20/12/2019
+    */
 const ModuleBase = load("com/base"); // import ModuleBase class
 
 

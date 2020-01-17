@@ -1,3 +1,13 @@
+/**
+    * Chat SIDE
+    * Projet Web
+    * @teacher Nicolas Prieur <nicopowa@gmail.com> <https://ilusio.dev/>     
+    *
+    * @autor Edgar Oblette <edwardoblette@gmail.com>
+    * @collegues: Mehdi 
+    *              
+    * 20/12/2019
+    */
 
 class Chat {
 
@@ -104,6 +114,13 @@ class ModelChat extends Model {
 
 
 	}
+
+	async hang_up(){
+		this.Rtc.handleHangup();
+		//await this.Rtc.Call(info)
+
+
+	}
 	
 	async data() {
 		trace("get data");
@@ -202,6 +219,14 @@ class ViewChat extends View {
 			this.message_box.style.overflow = "scroll";
 		this.stage.appendChild(this.message_box)
 
+		// create button send message
+		 this.btn_audio = document.createElement("button")
+			this.btn_audio.id = "audiocall-button"
+			this.btn_audio.innerHTML = "Appel audio"
+			this.btn_audio.style.display = "none"
+
+		this.stage.appendChild(this.btn_audio)
+
 	
 	}
 
@@ -221,21 +246,23 @@ class ViewChat extends View {
 		// on met un event sur le bouton d'envoi
 		this.getBtnHandler = e => this.sendBtnClick(e);
 		this.btn.addEventListener("click", this.getBtnHandler);
-		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e));
+		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "default"));
+		this.btn_audio.addEventListener("click",  e => this.connectBtnClick(e, "audio"));
 	}
 
 	removeListeners(){
 		// on supprime l'event sur le bouton d'envoi
 		this.btn.removeEventListener("click", this.getBtnHandler);
-		this.btn_connect.removeListener("click", this.getBtn_connectHandler);
+		this.btn_connect.removeListener("click",  e => this.connectBtnClick(e));
+		this.btn_audio.removeListener("click", e => this.connectBtnClick(e));
+		
 	}
-
 
 	sendBtnClick(event){
 		this.mvc.controller.sendBtnClicked(); // dispatch
 	}
-	connectBtnClick(event){
-		this.mvc.controller.connectBtnClicked(); // dispatch
+	connectBtnClick(event, method){
+		this.mvc.controller.connectBtnClicked(method); // dispatch
 	}
 
 	update(data) {
@@ -271,8 +298,10 @@ class ControllerChat extends Controller {
 		//this.mvc.view.update(response);
 	}
 
-	async connectBtnClicked(params){
-		await this.mvc.model.create_offer("default");
+	async connectBtnClicked(method){
+		if(method === "audio")
+			this.mvc.model.hang_up();
+		await this.mvc.model.create_offer(method);
 
 	}
 

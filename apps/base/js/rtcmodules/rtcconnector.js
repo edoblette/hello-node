@@ -1,7 +1,13 @@
 /**
-* @nocollapse
-* @export
-*/
+    * RTC SIDE
+    * Projet Web
+    * @teacher Nicolas Prieur <nicopowa@gmail.com> <https://ilusio.dev/>     
+    *
+    * @autor Edgar Oblette <edwardoblette@gmail.com>
+    * @collegues: Mehdi 
+    *              
+    * 20/12/2019
+    */
 class Rtc {
     constructor(adress) {
     	this.adress = null
@@ -49,8 +55,10 @@ class Rtc {
 	async  Call(info){
 		console.log("1 - J'appelle [INICIATOR]")
 		this.adress = info.adress;
-	  	this.shoter = info.shoter;
-	  	this.target = info.target;
+		if(!this.shoter)
+	  		this.shoter = info.shoter;
+	  	if(!this.target)
+	  		this.target = info.target;
 	  	this.caller = info.caller;
 	  	this.method = info.method;
 
@@ -168,6 +176,7 @@ class Rtc {
 
 	init_media(method){
 		// quel le methode d'appel
+		document.getElementById("audiocall-button").style.display = "block";
   		switch(method){
 
   			case "audio": 
@@ -178,6 +187,7 @@ class Rtc {
   			break;
 
   			case "video": 
+  				alert("video")
   				this.mediaSpec.video = {
 					    width: { min: 640, ideal: 1920 },
 					    height: { min: 400, ideal: 1080 },
@@ -230,7 +240,7 @@ class Rtc {
 	        	break;
 
 	        case "hang-up":
-	        	console("Bye bye")
+	        	alert("Bye bye")
 	        	this.closeVideoCall(params,info);
 	        	break;
   		}
@@ -333,6 +343,7 @@ class Rtc {
 		console.log("JE RECOIS LE FLUX");
 		document.getElementById("received_video").srcObject = event.streams[0];
 	  	document.getElementById("hangup-button").disabled = false;
+	 
 	  	//permet de renegocier
 		//this.caller = true;
 		//console.log("able to renogaciate")
@@ -350,12 +361,16 @@ class Rtc {
 	}
 
 	async handleHangup() {
-		this.closeVideoCall();
-		this.sendToServer({
-	    	name: this.shoter,
+		
+		var msg = {
+	    	shoter: this.shoter,
 	    	target: this.target,
 	    	type: "hang-up"
-		});
+		}
+		this.closeVideoCall();
+		this.sendToServer(msg);
+		alert(JSON.stringify(msg));
+
 	}
 
 	async handleICEConnectionStateChange(event) {
@@ -372,7 +387,7 @@ class Rtc {
 	handleSignalingStateChange(event) {
 		switch(this.localConnection.signalingState) {
 	    	case "closed":
-	    		alert("sinalin state closed");
+	    		alert("signaling state closed");
 	      		this.closeVideoCall();
 	      	break;
 	  }
