@@ -98,7 +98,6 @@ class ViewContact extends View {
 	/*	this.stage.style.left = "100px";
 		this.stage.style.top = "0px";*/
 		this.mvc.controller.inscWasclicked
-		console.log("!!! dedede" )
 		console.log(this.mvc.view)
 		setInterval(this.mvc.controller.inscWasclicked,1500)
 	}

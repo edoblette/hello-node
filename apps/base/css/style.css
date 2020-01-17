@@ -28,3 +28,28 @@ body {
 	font-family: helvetica;
 	font-size: 10pt;
 }
+
+.msg_emited{
+	background-color: blue
+}
+
+.msg_received{
+	background-color: red
+
+}
+.camera-box{
+
+	position: relative;
+}
+
+#received_video{
+	position: relative;
+	border:1px solid red;
+
+}
+#local_video{
+	position: absolute;
+	bottom: 0;
+	right: 10px
+	border:10px solid blue;
+}

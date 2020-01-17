@@ -1,25 +1,25 @@
 
 class Chat {
 
-	constructor() {
-		console.log("chat loaded");
-
-		this.initialize();
+	constructor(id_user) {
+		console.log("chat loaded" + id_user);
+		this.initialize(id_user);
 	}
 
-	async initialize() {
+	async initialize(id_user) {
 
 		this.iospace = "baseapp"; // IO namespace for this app
-		this.io = io.connect("http://localhost/" + this.iospace); // connect socket.io
-		this.io.on("connect", () => this.onIOConnect()); // listen connect event
-
+		this.io = io.connect(window.location.href + this.iospace); // connect socket.io
+		this.io.on("connect", (socket) => this.onIOConnect(id_user)); // listen connect event
+		console.log(this.io.id)
 		this.mvc = new MVC("Chat", this, new ModelChat(), new ViewChat(), new ControllerChat()); // init app MVC
 		await this.mvc.initialize(); // run init async tasks
 		this.mvc.view.attach(document.body); // attach view
 		this.mvc.view.activate(); // activate user interface
+		this.mvc.controller.user = id_user;
 
 	}
-
+	
 	/**
 	 * @method test : test server GET fetch
 	 */
@@ -29,24 +29,35 @@ class Chat {
 		console.log("result", result);
 		console.log("response", result.response);
 	}
-
+	
 	/**
 	 * @method onIOConnect : socket is connected
-	 */
-	onIOConnect() {
-		trace("yay IO connected");
-		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
-		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
-	}
+	*/ 
+	onIOConnect(id_user) {
+		
 
+		this.io.emit('new_user', id_user);
+		this.mvc.controller.user = id_user;
+		
+
+		this.io.on("msg", packet => this.socketData(packet)); // listen to "user" messages
+		this.io.on("from_server", packet => this.RtcDemand(packet)); // listen to "user" messages
+		//	this.io.emit("user", {value: "dummy data from client"}) // send test message
+	}
+ 
 	/**
 	 * @method onDummyData : dummy data received from io server
 	 * @param {Object} data 
-	 */
-	onDummyData(data) {
-		trace("IO data", data);
-		this.mvc.controller.ioDummy(data); // send it to controller
+	*/
+	socketData(data) {
+		this.mvc.controller.socketDataIn(data); // send it to controller
 	}
+
+	RtcDemand(data) {
+		this.mvc.controller.RtcDemand(data); // send it to controller
+	}
+	
+
 }
 
 class ModelChat extends Model {
@@ -57,9 +68,42 @@ class ModelChat extends Model {
 
 	async initialize(mvc) {
 		super.initialize(mvc);
-
+		await this.create_Rtc();
 	}
 
+	// methodess
+	async create_Rtc(){
+		//this.mvc.app.io.emit("msg", {value: "dummy data from client"})
+		this.Rtc = new Rtc(this);
+	}
+
+
+	async create_offer(){
+
+		//await this.mvc.app.io.emit('to_server', {type: "offer",shoter: this.mvc.view.username.value, target: this.mvc.view.target.value});
+		// await Comm.get("messageHandler/" + msg);
+		var info = {
+			adress: this.mvc,
+			shoter: this.mvc.controller.user ,
+			target: this.mvc.view.target.value,
+			caller: true
+		};
+		await this.Rtc.Call(info)
+	}
+
+	async receive_offer(params){
+		var info = {
+			adress: this.mvc,
+			shoter: null,
+			target: null,
+			caller: false
+		};
+		this.Rtc.ReceiveOffer(params, info)
+		//await this.Rtc.Call(info)
+
+
+	}
+	
 	async data() {
 		trace("get data");
 		// keep data in class variable ? refresh rate ?
@@ -73,11 +117,10 @@ class ModelChat extends Model {
 		return result.response; // return it to controller
 	}
 	
-	async SendMessage(message){
-			// keep data in class variable ? refresh rate ?
-		 await Comm.get("SendMessage/"+ message); // wait data from server
-		return message; // return it to controller
+ 	async SendMessageToRtc(msg){
+		this.Rtc.sendMessage(msg);
 	}
+
 
 }
 
@@ -90,6 +133,23 @@ class ViewChat extends View {
 
 	initialize(mvc) {
 		super.initialize(mvc);
+	/*
+		this.username=document.createElement("input")
+		this.username.placeholder = "username" 
+		this.username.value = ""
+		this.stage.appendChild(this.username)
+	*/
+	
+
+		this.target=document.createElement("input")
+		this.target.placeholder = "target"
+		this.target.value = ""
+		this.stage.appendChild(this.target)
+
+		// create button connect
+		this.btn_connect=document.createElement("button")
+		this.btn_connect.innerHTML = "connect"
+		this.stage.appendChild(this.btn_connect)
 
 		// create message input
 		this.text=document.createElement("input")
@@ -101,7 +161,47 @@ class ViewChat extends View {
 		this.btn.innerHTML = "envoyer"
 		this.stage.appendChild(this.btn)
 
-		//setInterval(this.mvc.controller.inscWasclicked,1500)
+		var div_chat = document.createElement("div");
+			div_chat.id = "chat"
+
+			var camera_container = document.createElement("div")
+				camera_container.id = "camera-container"
+
+				var camera_box = document.createElement("div")
+					camera_box.className = "camera-box"
+
+					var receive_video = document.createElement("video")
+						receive_video.id = "received_video"
+						receive_video.style.width = "400px"
+						receive_video.autoplay = true
+					camera_box.appendChild(receive_video)
+
+					var local_video = document.createElement("video")
+						local_video.id = "local_video"
+						local_video.style.width = "300px"
+						local_video.autoplay = true
+					camera_box.appendChild(local_video)
+				camera_container.appendChild(camera_box)
+
+				var hang_up = document.createElement("button")
+						hang_up.id = "hangup-button"
+						hang_up.innerHTML = "Raccrocher"
+						hang_up.disabled = true
+
+				camera_container.appendChild(hang_up)
+
+			div_chat.appendChild(camera_container)
+
+		this.stage.appendChild(div_chat)
+
+		this.message_box = document.createElement("div");
+			this.message_box.id = "message_box"
+			this.message_box.style.width = "auto"
+			this.message_box.style.height = "200px"
+			this.message_box.style.overflow = "scroll";
+		this.stage.appendChild(this.message_box)
+
+	
 	}
 
 	// activate UI
@@ -120,16 +220,21 @@ class ViewChat extends View {
 		// on met un event sur le bouton d'envoi
 		this.getBtnHandler = e => this.sendBtnClick(e);
 		this.btn.addEventListener("click", this.getBtnHandler);
+		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e));
 	}
 
 	removeListeners(){
 		// on supprime l'event sur le bouton d'envoi
 		this.btn.removeEventListener("click", this.getBtnHandler);
+		this.btn_connect.removeListener("click", this.getBtn_connectHandler);
 	}
 
 
 	sendBtnClick(event){
 		this.mvc.controller.sendBtnClicked(); // dispatch
+	}
+	connectBtnClick(event){
+		this.mvc.controller.connectBtnClicked(); // dispatch
 	}
 
 	update(data) {
@@ -143,12 +248,16 @@ class ViewChat extends View {
 	
 	}
 
+
+
 }
 
 class ControllerChat extends Controller {
 
 	constructor() {
 		super();
+		this.id_user = null;
+
 	}
 
 	initialize(mvc) {
@@ -156,15 +265,31 @@ class ControllerChat extends Controller {
 
 	}
 
-	async sendBtnClicked(params){
-		let response = await this.mvc.model.SendMessage( this.mvc.view.text.value);
-		this.mvc.view.update(response);
+	async sendBtnClicked(params){		
+		let response = await this.mvc.model.SendMessageToRtc(this.mvc.view.text.value);
+		//this.mvc.view.update(response);
+	}
+
+	async connectBtnClicked(params){
+		await this.mvc.model.create_offer();
+
+	}
+
+	async RtcDemand(params){
+
+		await this.mvc.model.receive_offer(params);
+	}
+
+	socketDataIn(data) {
+		alert(data.value);
+	}
+
+	set user(pseudo){
+		this.id_user = pseudo;
 	}
 
 
-
-	ioDummy(data) {
-	
+	get user(){
+		return this.id_user;
 	}
-
 }
