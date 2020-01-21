@@ -25,20 +25,10 @@ class Rtc {
   		//media specs
 
   		this.mediaSpec = {
+  			
   			audio :false,
   			video :false
-  			/*
-
-  			audio :{
-					    sampleSize: 16,
-					    channelCount: 2
-					},
-  			video : {
-					    width: { min: 640, ideal: 1920 },
-					    height: { min: 400, ideal: 1080 },
-					    aspectRatio: { ideal: 1.7777777778 }
-					}
-		*/
+		
   		}
 	    //var transceiver; 	
 	}
@@ -177,6 +167,7 @@ class Rtc {
 	init_media(method){
 		// quel le methode d'appel
 		document.getElementById("audiocall-button").style.display = "block";
+		document.getElementById("videocall-button").style.display = "block";
   		switch(method){
 
   			case "audio": 
@@ -187,7 +178,6 @@ class Rtc {
   			break;
 
   			case "video": 
-  				alert("video")
   				this.mediaSpec.video = {
 					    width: { min: 640, ideal: 1920 },
 					    height: { min: 400, ideal: 1080 },
@@ -196,6 +186,10 @@ class Rtc {
   			break;
 
   			case "mixed": 
+  				/*
+  				this.mediaSpec.audio = true;
+  				this.mediaSpec.video = true
+  				*/
   			  		this.mediaSpec.audio = {
 					    sampleSize: 16,
 					    channelCount: 2
@@ -206,10 +200,11 @@ class Rtc {
 					    height: { min: 400, ideal: 1080 },
 					    aspectRatio: { ideal: 1.7777777778 }
 					}
+				
   			break;
 
   			case "default": 
-  				//alert("only msg")
+  				alert("default ")
   			break;
   		}
 
@@ -341,6 +336,7 @@ class Rtc {
 	// Recois les flux
 	async handleTrack(event){
 		console.log("JE RECOIS LE FLUX");
+		document.getElementById("camera-container").style.display = "block";
 		document.getElementById("received_video").srcObject = event.streams[0];
 	  	document.getElementById("hangup-button").disabled = false;
 	 
@@ -369,8 +365,6 @@ class Rtc {
 		}
 		this.closeVideoCall();
 		this.sendToServer(msg);
-		alert(JSON.stringify(msg));
-
 	}
 
 	async handleICEConnectionStateChange(event) {
@@ -378,8 +372,8 @@ class Rtc {
 	    	case "closed":
 	    	case "failed":
 	    	case "disconnected":
-	    		alert("ice connection closed");
-	      		this.closeVideoCall();
+	    		//alert("ice connection closed");
+	      		//this.closeVideoCall();
 	      	break;
 	  }
 	}
@@ -426,6 +420,7 @@ class Rtc {
 		remoteVideo.removeAttribute("srcObject");
 
 		document.getElementById("hangup-button").disabled = true;
+		document.getElementById("camera-container").style.display = "none";
 	 	this.target = null;
 	}
 

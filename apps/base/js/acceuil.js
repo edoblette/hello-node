@@ -10,6 +10,7 @@ class Accueil {
 	async initialize() {
 
 		this.iospace = "baseapp"; // IO namespace for this app
+		console.log(window.location.href)
 		this.io = io.connect(window.location.href + this.iospace); // connect socket.io
 		this.io.on("connect", () => this.onIOConnect()); // listen connect event
 		this.mvc = new MVC("myMVC", this, new MyModel(), new MyView(), new MyController()); // init app MVC

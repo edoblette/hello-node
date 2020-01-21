@@ -5,7 +5,9 @@ const SocketIO = 	require("socket.io");	// socket.io
 
 
 // native modules
-const http = 		require("http"); 		// http server
+const http = 		require("http"); 		// http server\
+const https = 		require("https"); 		// http server
+
 const path = 		require("path"); 		// path
 const fs = 			require("fs");			// file system
 
@@ -30,13 +32,19 @@ class Server {
 	constructor() {
 		this._port = 80; // http port
 		trace("start http", this._port);
-		
+		this._portHttps = 443;
+		trace("start http", this._portHttps);
+
 		this._connect = Connect(); // connect instance
 		this._connect.use(this.handle.bind(this)); // handle request
 		this._connect.use(this.serve.bind(this)); // check request is file
 		this._connect.use(this.unhandled.bind(this)); // unhandled request
 
 		this._server = http.createServer(this._connect).listen(this._port); // start http server
+		this._server = https.createServer({
+		  key: fs.readFileSync('server.key'),
+		  cert: fs.readFileSync('server.cert')
+		}, this._connect).listen(this._portHttps); // start https server
 
 		this._io = SocketIO(this._server);
 
@@ -54,6 +62,10 @@ class Server {
 
 	handle(req, res, next) { // handle request
 		trace("request", req.url);
+		//if (!req.secure) 
+			//this._app.send302(req, res, 'https://' + req.headers.host + req.url);
+		if (req.connection.encrypted !== true) return this._app.send302(req, res, "https://" + req.headers["host"] + req.url);
+
 		let parts = req.url.split("/").map(part => part.replace(/[^a-z0-9-\.]/gi, "")).filter(Boolean); // url parts
 		req.route = parts[0]; // isolate method
 		req.path = parts.join(path.sep) || "/"; // keep path in request object

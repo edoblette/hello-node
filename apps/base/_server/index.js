@@ -104,7 +104,7 @@ class Base extends ModuleBase {
 	new_user(socket, user){
 		if(user != null){
 			this.user.set(user, socket);
-			socket.broadcast.emit("msg", {message: user, value: "New user " + user}); // answer dummy random message
+			//socket.broadcast.emit("msg", {message: user, value: "New user " + user}); // answer dummy random message
 		}
 	}
 
@@ -120,7 +120,7 @@ class Base extends ModuleBase {
 						this.messageToClient(this.user.get(target), message)
 				}
 			}else 
-				console.log("pas compris " + message)	
+				console.log("Invalid Syntax " + message)	
 
 			
 			//this.sendJSON(req, res, 200, {message: username});
@@ -133,7 +133,6 @@ class Base extends ModuleBase {
 
 	_onDummyData(socket, packet) { // dummy message received
 		
-	
 		trace(socket.id, "user dit ", packet); // say it
 		socket.broadcast.emit("user", {message: packet, value: "test"}); // answer dummy random message
 

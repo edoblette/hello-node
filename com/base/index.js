@@ -55,9 +55,20 @@ class ModuleBase {
      * @param {http.Response} res 
      * @param {string} url 
      */
+    send301(req, res, url) {
+        res.writeHead(301, {"Location": url}).end();
+    }
+
+    /**
+     * @method send302 : 
+     * @param {http.Request} req 
+     * @param {http.Response} res 
+     * @param {string} url 
+     */
     send302(req, res, url) {
         res.writeHead(302, {"Location": url}).end();
     }
+
 
     /**
      * @method send401 : 

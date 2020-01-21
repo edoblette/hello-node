@@ -219,13 +219,21 @@ class ViewChat extends View {
 			this.message_box.style.overflow = "scroll";
 		this.stage.appendChild(this.message_box)
 
-		// create button send message
+		// create button audio
 		 this.btn_audio = document.createElement("button")
 			this.btn_audio.id = "audiocall-button"
 			this.btn_audio.innerHTML = "Appel audio"
 			this.btn_audio.style.display = "none"
 
 		this.stage.appendChild(this.btn_audio)
+
+		// create button video
+		 this.btn_video = document.createElement("button")
+			this.btn_video.id = "videocall-button"
+			this.btn_video.innerHTML = "Appel video"
+			this.btn_video.style.display = "none"
+
+		this.stage.appendChild(this.btn_video)
 
 	
 	}
@@ -248,6 +256,7 @@ class ViewChat extends View {
 		this.btn.addEventListener("click", this.getBtnHandler);
 		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "default"));
 		this.btn_audio.addEventListener("click",  e => this.connectBtnClick(e, "audio"));
+		this.btn_video.addEventListener("click",  e => this.connectBtnClick(e, "video"));
 	}
 
 	removeListeners(){
@@ -255,6 +264,7 @@ class ViewChat extends View {
 		this.btn.removeEventListener("click", this.getBtnHandler);
 		this.btn_connect.removeListener("click",  e => this.connectBtnClick(e));
 		this.btn_audio.removeListener("click", e => this.connectBtnClick(e));
+		this.btn_video.addEventListener("click",  e => this.connectBtnClick(e));
 		
 	}
 
@@ -299,8 +309,9 @@ class ControllerChat extends Controller {
 	}
 
 	async connectBtnClicked(method){
-		if(method === "audio")
-			this.mvc.model.hang_up();
+		
+		//if((method === "audio") || (method === "mixed"))
+		this.mvc.model.hang_up();
 		await this.mvc.model.create_offer(method);
 
 	}
