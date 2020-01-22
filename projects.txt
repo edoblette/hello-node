@@ -1,0 +1,319 @@
+
+les projets doivent être conçus en suivant une architecture type MVC (sauf certains pour lesquels c'est inutile)
+l'interface ne sera pas notée mais doit être simple et épurée
+les conventions mobiles doivent être respectées (taille des éléments cliquables, responsive design, rotation, ...)
+le code doit être simple et clair, bien cloisonné, respecter des conventions, nommage explicite des méthodes et variables.
+
+avant le développement :
+	- définir les technos et APIs JS à utiliser
+	- mettre en place les communications client/serveur
+	- mettre en place les communications MVC
+	- définir les différentes vues à implémenter
+	- définir l'arborescence des classes
+	
+pendant le développement :
+	- documenter les méthodes les plus sollicitées
+	- rédiger une brève description de chaque classe au début des fichiers
+	
+après le développement :
+	- rédiger un compte rendu, expliquer le choix des technos et APIs
+	- expliquer l'architecture du programme
+	- les problèmes rencontrés lors du dev
+
+
+01 - site de rencontres :
+
+	. serveur
+		
+		- base de données des comptes utilisateurs
+		
+		- algorithme de matching basé sur la localisation / orientation / centres d'intêrets
+		
+		- service de messages entre utilisateurs
+
+	. page principale
+		
+		- création compte
+			
+			. pseudo
+			. centres d'intêret
+			. âge
+			. région / département / ville / arrondissement / GPS
+			. genre
+			. photo
+			
+		- connexion
+		
+		- préférences
+		
+		
+	. page navigation
+	
+		- vignette pleine taille façon "polaroïd" image + infos profil en dessous
+		- swipe gauche / droite pour passer au profil suivant / précédent
+		- double tap pour like
+		
+	. page messages
+	
+		- champ texte et bouton envoyer
+		- affichage de la conversation
+
+02 - galerie photo : affichage grille / naviguer dans les galeries / photos plein écran / upload images / créer et modifier galeries
+
+	. serveur
+		
+		- upload images
+		
+		- gestion proprieté images / albums / utilisateurs
+		
+		- gestion des albums
+		
+	. client
+	
+		- création albums
+		
+		- analyse métadonnées ?
+		
+		- affichage par grille
+		
+		- tagger les images
+		
+		- animations ?
+		
+		- recherche d'images par tag ?
+
+03 - agar.io like : déplacement dans un repère / tests de collision
+
+	. serveur
+	
+		- moteur de jeu
+		
+			. déplacement des pions
+			
+			. tests de collision
+			
+			. scores
+			
+	. client
+	
+		- déplacement dans le repère
+		
+			. joystick touch
+
+04 - chat webrtc avec crypto : utilisation des serveurs TURN/STUN Google puis communication chiffrée P2P
+
+	. serveur de mise en relation clients
+	
+		- base de données utilisateurs
+		
+		- table de liste d'amis
+	
+	. création de compte
+	
+	. invitation sur pseudo (pas de recherche utilisateurs)
+	
+	. crypto 
+		
+		- AES
+		- RSA
+		- Diffie-Hellman
+		
+	. page de discussion via RTC
+	
+	. envoi de fichiers ?
+	
+	. notifications navigateur ?
+
+	https://medium.com/crim/webrtc-et-la-construction-dune-application-web-de-vid%C3%A9oconf%C3%A9rence-c9105b3520e
+	https://developer.mozilla.org/fr/docs/Web/Guide/API/WebRTC/WebRTC_architecture
+	https://www.html5rocks.com/fr/tutorials/webrtc/basics/
+	https://www.tutorialspoint.com/webrtc/webrtc_rtcpeerconnection_apis.htm
+
+05 - chat nodejs : création de compte / liste d'amis / invitations / group chat / crypto
+
+	. serveur
+	
+		- création de comptes
+		
+		- liste d'amis
+		
+		- invitations
+		
+		- canal de chat
+		
+		- group chat
+		
+	. client
+	
+		- web app connexion auto
+	
+		- page login
+		
+		- page liste d'amis
+		
+		- page chats
+		
+		- menu
+		
+		- crypto ?
+
+06 - coverflow : trigonometrie / css transforms / options
+
+	. scope : plusieurs instances sur la même page
+	
+	. vertical / horizontal
+	
+	. espace entre les vignettes
+	
+	. vitesse
+	
+	. events (start, scroll, end)
+	
+	. methodes publiques (select, goto, destroy)
+
+07 - composant calendrier :
+
+	. vue par grille
+	
+	. vue par colonne
+	
+	. année / jours / mois
+	
+	. création / édition de rdv
+
+08 - spritesheet engine : moteur de jeu avec animations et prise en charge des couches de transparence
+
+	. canvas
+	
+	. classe spritesheet
+	
+		- plusieurs sheets (ex : personnage change de direction)
+	
+	. prise en charge des couches
+	
+	. transparence
+	
+	. déplacement
+
+09 - webextension : crawler ou robot twitter / instagram / autre site au choix
+
+	. librairie abstraite : création d'events, surveillance de la page mutationobserver
+	
+	. methodes publiques : click, type, parse
+	
+10 - webextension :
+
+	. interception des requêtes ajax
+	
+	. interface : autoriser / refuser / session / pour toujours
+	
+	. stockage des listes & préférences
+
+11 - photobooth : comme dans macOs / appliquer des filtres en temps réel sur l'image de la webcam
+
+	. capturer le flux de la webcam
+	
+	. redimensionnement
+	
+	. application des filtres
+	
+	. filtres
+		
+		- nuances de gris
+		
+		- couleurs chaudes
+
+12 - jeux multi écran nodejs : jeu multijoueur avec déplacement des pions ou personnages entre les écrans
+
+	. détecter le placement des joueurs (boussole, gyro ...)
+	
+	. mise en place d'une "liste chaînée" d'écrans
+	
+	. assignation de coordonnées aux terminaux
+	
+	. moteur de jeu
+
+	. scores
+
+13 - plateforme de stats type google analytics : développement d'une librairie permettant de tracker les actions utilisateurs sur un site, puis dev du serveur et graphiques / data visualization
+
+	. serveur 
+	
+		- centralisation des statistiques par nom / date / type
+		
+	. api client
+	
+		- création de champs statistiques
+		
+		- appels vers le serveur
+
+14 - convertisseur ES6 > ES5 : tout est dans le titre
+
+	. analyse de code
+	
+	. séparation par blocs
+	
+	. conversion
+
+15 - tableau post-it : déplacement dans un repère sans limites / création & édition de post-it (éventuellement avec des images)
+
+	. création de comptes
+	
+	. création / édition de post-it avec texte / image
+	
+	. déplacement dans un repère sans limites, algorithme de chargement depuis le serveur
+
+16 - lecteur de musique : aurorajs
+
+	. serveur 
+	
+		- stockage des fichiers
+		
+		- parsing de la librairie
+		
+		- playlists utilisateurs
+		
+	. client
+	
+		- création playlists
+		
+		- notes
+		
+		- bookmarks
+		
+		- interface librairie / playlists drag drop
+
+		- modes de lecture aléatoire, repeat 
+		
+17 - image editor
+
+	crayon
+	pipette
+	tampon
+	pot de peinture
+	
+18 - Mapstr-like :
+	utiliser l'API Google Maps pour permettre aux utilisateurs de créer leur base de données de lieux visités / favoris
+	- l'utilisateur se connecte au site
+	- il peut voir la liste des lieux qu'il a ajoutés
+	- ajouter un nouveau lieu en faisant une recherche dans la base de données de Google Maps
+	- ajouter un nouveau lieu via localisation GPS
+
+19 - Invisible Watermark
+	écrire un algorithme qui fait varier sensiblement les pixels d'une image afin d'y insérer des checksums permettant d'identifier l'image avec l'algorithme inverse.
+	> doit fonctionner si l'image a été recadrée
+
+
+20 - Paiement mobile (pour Android / Pas encore possible avec les navigateurs iOs)
+	programmer un système de paiement par QR-CODE
+	- le vendeur et client créent un compte
+	- le vendeur entre la somme à payer et le motif de la transaction
+	- la plateforme génère et affiche un QR contenant les infos de la transaction
+	- le client scanne le QRCode
+	- les détails de la transaction s'affichent sur l'écran (vendeur, motif, somme)
+	- le client valide la transaction
+	- le vendeur reçoit un accusé
+	
+21 - plateforme de sondages
+	- création de formulaires
+	- formulaire de réponses avec liens uniques afin d'identifier les utilisateurs sans renseigner nom et prénom
