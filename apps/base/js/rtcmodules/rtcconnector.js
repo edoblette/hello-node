@@ -340,7 +340,9 @@ class Rtc {
 
 		document.getElementById("camera-container").style.display = "block";
 		document.getElementById("received_video").srcObject = event.streams[0];
-	   	document.getElementById("hangup-button").disabled = false;
+		var hang_up = document.getElementById("hangup-button")
+	   	hang_up.disabled = false;
+	   	hang_up.addEventListener("click",  e => this.handleHangup());
 
 	  	//permet de renegocier
 		//this.caller = true;
