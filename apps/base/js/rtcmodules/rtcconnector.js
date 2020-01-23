@@ -54,7 +54,6 @@ class Rtc {
 
 	   	this.init_media(this.method);
 
-
 	  	this.message_box = this.adress.view.message_box;
 
 		await this.LauchPeers()
@@ -243,6 +242,8 @@ class Rtc {
 
    // User receive a Video Offer
 	async handleOffer(params, info){
+
+
 	  	console.log("1 - Je recois une offre [RECEVOR]")
 	  	this.adress = info.adress;
 	  	this.target = info.shoter ;
@@ -336,10 +337,11 @@ class Rtc {
 	// Recois les flux
 	async handleTrack(event){
 		console.log("JE RECOIS LE FLUX");
+
 		document.getElementById("camera-container").style.display = "block";
 		document.getElementById("received_video").srcObject = event.streams[0];
-	  	document.getElementById("hangup-button").disabled = false;
-	 
+	   	document.getElementById("hangup-button").disabled = false;
+
 	  	//permet de renegocier
 		//this.caller = true;
 		//console.log("able to renogaciate")
@@ -410,6 +412,11 @@ class Rtc {
 		      localVideo.srcObject.getTracks().forEach(track => track.stop());
 		    }
 
+		    if(this.sendChannel){
+		    	this.sendChannel.close();
+		    	this.sendChannel = null;
+		    }
+		    
 		    this.localConnection.close();
 		    this.localConnection = null;
 		}
@@ -421,7 +428,27 @@ class Rtc {
 
 		document.getElementById("hangup-button").disabled = true;
 		document.getElementById("camera-container").style.display = "none";
-	 	this.target = null;
+
+	 	this.shoter = null;
+  		this.target = null ;	 
+		this.caller = null;
+		this.method = null;
+		this.adress = null
+
+		this.message_box = null
+  		this.webcamStream = null;
+
+  		//media specs
+
+  		this.mediaSpec = {
+  			
+  			audio :false,
+  			video :false
+		
+  		}
+
+
+
 	}
 
 	// data chanel
@@ -437,7 +464,6 @@ class Rtc {
 		  		"timestamp": timestamp
 		  	})
 		  	this.sendChannel.send(msg)
-
 		  	this.message_format({message: msg, emiter:true})
 		  	
 		}else{

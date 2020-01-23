@@ -158,26 +158,41 @@ class ViewChat extends View {
 		this.stage.appendChild(this.username)
 	*/
 	
+	var right_side = document.createElement("div")
+					right_side.className = "split right_side"
 
 		this.target=document.createElement("input")
 		this.target.placeholder = "target"
 		this.target.value = ""
-		this.stage.appendChild(this.target)
+		right_side.appendChild(this.target)
 
 		// create button connect
 		this.btn_connect=document.createElement("button")
 		this.btn_connect.innerHTML = "connect"
-		this.stage.appendChild(this.btn_connect)
+		right_side.appendChild(this.btn_connect)
 
-		// create message input
+		this.message_box = document.createElement("div");
+			this.message_box.id = "message_box"
+			this.message_box.style.width = "auto"
+			this.message_box.style.height = "200px"
+			this.message_box.style.overflow = "scroll";
+		right_side.appendChild(this.message_box)
+		
+				// create message input
 		this.text=document.createElement("input")
 		this.text.placeholder = "message"
-		this.stage.appendChild(this.text)
+		this.text.style.width = "100%"
+		right_side.appendChild(this.text)
 
 		// create button send message
 		this.btn=document.createElement("button")
 		this.btn.innerHTML = "envoyer"
-		this.stage.appendChild(this.btn)
+		right_side.appendChild(this.btn)
+
+	this.stage.appendChild(right_side)
+
+	var left_side = document.createElement("div")
+					left_side.className = "split left_side"
 
 		var div_chat = document.createElement("div");
 			div_chat.id = "chat"
@@ -190,13 +205,13 @@ class ViewChat extends View {
 
 					var receive_video = document.createElement("video")
 						receive_video.id = "received_video"
-						receive_video.style.width = "400px"
+						receive_video.style.width = "100%"
 						receive_video.autoplay = true
 					camera_box.appendChild(receive_video)
 
 					var local_video = document.createElement("video")
 						local_video.id = "local_video"
-						local_video.style.width = "300px"
+						local_video.style.width = "40%"
 						local_video.autoplay = true
 					camera_box.appendChild(local_video)
 				camera_container.appendChild(camera_box)
@@ -210,14 +225,7 @@ class ViewChat extends View {
 
 			div_chat.appendChild(camera_container)
 
-		this.stage.appendChild(div_chat)
-
-		this.message_box = document.createElement("div");
-			this.message_box.id = "message_box"
-			this.message_box.style.width = "auto"
-			this.message_box.style.height = "200px"
-			this.message_box.style.overflow = "scroll";
-		this.stage.appendChild(this.message_box)
+		left_side.appendChild(div_chat)
 
 		// create button audio
 		 this.btn_audio = document.createElement("button")
@@ -225,7 +233,7 @@ class ViewChat extends View {
 			this.btn_audio.innerHTML = "Appel audio"
 			this.btn_audio.style.display = "none"
 
-		this.stage.appendChild(this.btn_audio)
+		left_side.appendChild(this.btn_audio)
 
 		// create button video
 		 this.btn_video = document.createElement("button")
@@ -233,7 +241,11 @@ class ViewChat extends View {
 			this.btn_video.innerHTML = "Appel video"
 			this.btn_video.style.display = "none"
 
-		this.stage.appendChild(this.btn_video)
+		left_side.appendChild(this.btn_video)
+
+	this.stage.appendChild(left_side)
+
+
 
 	
 	}
@@ -254,7 +266,14 @@ class ViewChat extends View {
 		// on met un event sur le bouton d'envoi
 		this.getBtnHandler = e => this.sendBtnClick(e);
 		this.btn.addEventListener("click", this.getBtnHandler);
-		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "default"));
+		this.text.addEventListener('keyup', async e => {
+  			if((e.keyCode === 13) && (this.text.value)){
+  				this.sendBtnClick(e)
+  				this.text.value = "";
+  			}
+  		});
+
+		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "mixed"));
 		this.btn_audio.addEventListener("click",  e => this.connectBtnClick(e, "audio"));
 		this.btn_video.addEventListener("click",  e => this.connectBtnClick(e, "video"));
 	}
@@ -310,8 +329,9 @@ class ControllerChat extends Controller {
 
 	async connectBtnClicked(method){
 		
-		//if((method === "audio") || (method === "mixed"))
-		this.mvc.model.hang_up();
+		//if((method === "audio") || (method === "video") || (method === "mixed"))
+			//this.mvc.model.hang_up();
+		
 		await this.mvc.model.create_offer(method);
 
 	}

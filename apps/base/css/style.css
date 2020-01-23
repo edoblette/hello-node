@@ -40,21 +40,47 @@ body {
 	font-size: 10pt;
 }
 
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.left_side {
+  left: 0;
+  background-color: #1e272e;
+}
+
+.right_side {
+  right: 0;
+  background-color: #d2dae2;
+}
+
 .msg_emited{
-	background-color: blue
+	background-color: #ffdd59
 }
 
 .msg_received{
-	background-color: red
+	background-color: #ff5e57
 
 }
 .camera-box{
-
 	position: relative;
 }
 
+
+.message_box{
+	position:relative;
+	display: inline;
+}
+
 #camera-container{
-	display: none;
+	position:relative;
+	display: block;
 	border: 3px solid blue;
 }
 
@@ -65,7 +91,8 @@ body {
 }
 #local_video{
 	position: absolute;
+	left:60%;
 	bottom: 0;
-	right: 10px
+	display: inline-block;
 	border:10px solid blue;
 }
