@@ -97,20 +97,6 @@ class MyView extends View {
 	initialize(mvc) {
 		super.initialize(mvc);
 
-		// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
-
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
-
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
 
 		// get dataset display
 		this.table = document.createElement("table");
@@ -119,7 +105,7 @@ class MyView extends View {
 
 		//champ texte pour l'inscritopn
 		this.text_ins=document.createElement("text")
-		this.text_ins.textContent="inscritopn"
+		this.text_ins.textContent="Inscription"
 		this.stage.appendChild(this.text_ins);
 
 		// texte pour qu'il comprennent
@@ -151,19 +137,13 @@ class MyView extends View {
 	}
 
 	addListeners() {
-		this.getBtnHandler = e => this.btnClick(e);
-		this.btn.addEventListener("click", this.getBtnHandler);
-
-		this.ioBtnHandler = e => this.ioBtnClick(e);
-		this.iobtn.addEventListener("click", this.ioBtnHandler);
 
 		this.inscBtnHandler = e => this.inscBtnClick(e);
 		this.insc.addEventListener("click", this.inscBtnHandler);
 	}
 
 	removeListeners() {
-		this.btn.removeEventListener("click", this.getBtnHandler);
-		this.iobtn.removeEventListener("click", this.ioBtnHandler);
+
 		this.insc.removeEventListener("click", this.inscBtnHandler);
 	}
 
