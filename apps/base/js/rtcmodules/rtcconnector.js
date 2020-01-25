@@ -36,10 +36,9 @@ class Rtc {
   	// Functions
   
 	async sendToServer(msg) {
-		if(this.adress){
-			//console.log("on envoie le patos : " + msg)
+		if(this.adress)
 			await this.adress.app.io.emit('to_server', msg);
-		}
+		
 	}
 
 	async  Call(info){
@@ -62,7 +61,6 @@ class Rtc {
 
 	async LauchPeers() {
 
-	    
 	    this.localConnection = new RTCPeerConnection({
 	    	iceServers: [{
 	    		urls: "stun:stun.12connect.com:3478",
@@ -75,16 +73,12 @@ class Rtc {
 	  	
 	  	
 	  	this.localConnection.ontrack = e => this.handleTrack(e);
-	  	//seulement si je suis l'appelant
-	  	//if(this.caller)
-		 	this.localConnection.onnegotiationneeded = e => this.Signal_Negociation(e);
-
+		this.localConnection.onnegotiationneeded = e => this.Signal_Negociation(e);
 		this.localConnection.onicecandidate = e => this.handleICECandidate(e);
 		this.localConnection.onremovetrack = e => this.handleRemovedTrack(e);
 		this.localConnection.oniceconnectionstatechange = e => this.handleICEConnectionStateChange(e);
 		this.localConnection.onsignalingstatechange = e => this.handleSignalingStateChange(e);
 
-	    //this.Signal_Negociation()
 		
 	    // Create the data channel 
 	    if(this.caller){
@@ -95,14 +89,11 @@ class Rtc {
 	    	this.localConnection.ondatachannel = e  => this.receiveChannelCallback(e);
 	    }
 	    
-	    //console.log("DONE ")
  	}
 
 	async Signal_Negociation(){
-
 		try {
 	    
-
 		    // If the connection hasn't yet achieved the "stable" state,
 		    // return to the caller. Another negotiationneeded event
 		    // will be fired when the state stabilizes.
@@ -127,8 +118,9 @@ class Rtc {
 			      sdp: this.localConnection.localDescription
 			    });
 			console.log("4 - Offre envoye [INICIATOR]")
+
 		} catch(err) {
-	    console.log("*** The following error occurred while handling the negotiationneeded event:" + err.message);
+	    	console.log("*** The following error occurred while handling the negotiationneeded event:" + err.message);
 	   
 	  };
 
@@ -136,7 +128,6 @@ class Rtc {
 
 	async GetMediaAccess(){
   		console.log("ajoute media")
- 
 	    var transceiver;
 
 	    if(!this.webcamStream){
@@ -151,8 +142,8 @@ class Rtc {
 		      return;
 		    }
 		}
-	    // Add the tracks from the stream to the RTCPeerConnection
 
+	    // Add the tracks from the stream to the RTCPeerConnection
 	    try {
 	      this.webcamStream.getTracks().forEach(
 	        transceiver = track => this.localConnection.addTransceiver(track, {streams: [this.webcamStream]})
@@ -220,17 +211,15 @@ class Rtc {
 	        	break;
 
 	        case "answer":  // Callee has answered our offer
-	        	//console.log("Mais biensur BG !")
 	        	this.handleAnswer(params,info);
 	        	break;
 
 	         case "new-ice-candidate":  // Callee has answered our offer
-	        	//console.log("Tiens mon num")
 	        	this.handleNewIceCandidate(params,info);
 	        	break;
 
 	        case "end-of-candidate":  // Callee has answered our offer
-	        	//console.log("Fin des candidats")
+	        	//nothing to do
 	        	break;
 
 	        case "hang-up":
@@ -343,11 +332,6 @@ class Rtc {
 		var hang_up = document.getElementById("hangup-button")
 	   	hang_up.disabled = false;
 	   	hang_up.addEventListener("click",  e => this.handleHangup());
-
-	  	//permet de renegocier
-		//this.caller = true;
-		//console.log("able to renogaciate")
-	  	
 	}
 
 	async handleRemovedTrack(event) {
@@ -361,7 +345,6 @@ class Rtc {
 	}
 
 	async handleHangup() {
-		
 		var msg = {
 	    	shoter: this.shoter,
 	    	target: this.target,
@@ -441,15 +424,10 @@ class Rtc {
   		this.webcamStream = null;
 
   		//media specs
-
   		this.mediaSpec = {
-  			
   			audio :false,
   			video :false
-		
   		}
-
-
 
 	}
 
@@ -476,8 +454,6 @@ class Rtc {
 	receiveChannelCallback(e){
 		console.log("call back");
 		this.sendChannel = e.channel;
-	    //receiveChannel.onopen = e => this.handlesendChannelStatusChange(e);
-	    //receiveChannel.onclose = e => this.handlesendChannelStatusChange(e);
 	    this.sendChannel.onmessage = e => this.handleChannelNewMessage(e);
 	}
 

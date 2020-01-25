@@ -273,7 +273,7 @@ class ViewChat extends View {
   			}
   		});
 
-		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "mixed"));
+		this.btn_connect.addEventListener("click",  e => this.connectBtnClick(e, "default"));
 		this.btn_audio.addEventListener("click",  e => this.connectBtnClick(e, "audio"));
 		this.btn_video.addEventListener("click",  e => this.connectBtnClick(e, "video"));
 	}
